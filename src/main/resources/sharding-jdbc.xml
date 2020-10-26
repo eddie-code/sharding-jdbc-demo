@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sharding="http://shardingsphere.apache.org/schema/shardingsphere/sharding"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://shardingsphere.apache.org/schema/shardingsphere/sharding
+                        http://shardingsphere.apache.org/schema/shardingsphere/sharding/sharding.xsd
+                        ">
+    <!-- MySQL数据源 -->
+    <bean id="ds0" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="username" value="eddie" />
+        <property name="password" value="Abc@123456" />
+        <property name="jdbcUrl" value="jdbc:mysql://192.168.8.246/sharding_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
+    </bean>
+    <bean id="ds0" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="username" value="eddie" />
+        <property name="password" value="Abc@123456" />
+        <property name="jdbcUrl" value="jdbc:mysql://192.168.8.247/sharding_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
+    </bean>
+
+    <!-- sharding-jdbc数据源 -->
+    <sharding:data-source id="sharding-data-source">
+        <!-- 多个数据源用逗号分割 -->
+        <sharding:sharding-rule data-source-names="ds0,ds1">
+            <sharding:table-rules>
+                <!-- 逻辑表名称 logic-table="t_order" 对应Mapper.xml里面的表名 -->
+                <!-- 数据节点 actual-data-nodes="ds$->{0..1}.t_order_$->{1..2}"  -->
+                <!-- 数据库分片策略 database-strategy-ref="databaseStrategy" -->
+                <!-- 数据表分片策略 table-strategy-ref="tableStrategy"  -->
+                <sharding:table-rule logic-table="t_order"
+                                     actual-data-nodes="ds$->{0..1}.t_order_$->{1..2}"
+                                     database-strategy-ref="databaseStrategy"
+                                     table-strategy-ref="tableStrategy"
+                />
+            </sharding:table-rules>
+        </sharding:sharding-rule>
+    </sharding:data-source>
+
+    <!-- 数据库分片规则 -->
+    <sharding:inline-strategy id="databaseStrategy"
+                              sharding-column="user_id"
+                              algorithm-expression="ds$->{user_id % 2}"
+    />
+
+    <!-- 数据表分片规则 -->
+    <!-- id取模，可能会出现寻找到 t_order_0 的表，但实际上是没有的，所以 +1  -->
+    <sharding:inline-strategy id="tableStrategy"
+                              sharding-column="id"
+                              algorithm-expression="t_order_$->{id % 2 + 1}"
+    />
+
+    <!-- 设置 mybatis 数据源 -->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="sharding-data-source"/>
+        <property name="mapperLocations" value="classpath*:/mybatis/*.xml" />
+    </bean>
+
+</beans>
