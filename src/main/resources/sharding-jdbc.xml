@@ -14,11 +14,11 @@
         <property name="password" value="Abc@123456" />
         <property name="jdbcUrl" value="jdbc:mysql://192.168.8.246/sharding_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
     </bean>
-    <bean id="ds0" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+    <bean id="ds1" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
         <property name="username" value="eddie" />
         <property name="password" value="Abc@123456" />
-        <property name="jdbcUrl" value="jdbc:mysql://192.168.8.247/sharding_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
+        <property name="jdbcUrl" value="jdbc:mysql://192.168.8.247/shard_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
     </bean>
 
     <!-- sharding-jdbc数据源 -->
