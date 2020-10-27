@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ImportResource;
  * @author Eddie
  */
 @SpringBootApplication
-@ImportResource("classpath*:sharding-jdbc.xml")
+//@ImportResource("classpath*:sharding-jdbc.xml")
 @MapperScan("com.example.shardingjdbcdemo.dao")
 public class ShardingJdbcDemoApplication {
 
