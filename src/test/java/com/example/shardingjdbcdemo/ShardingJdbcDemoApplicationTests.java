@@ -1,6 +1,9 @@
 package com.example.shardingjdbcdemo;
 
+import com.example.shardingjdbcdemo.dao.AreaMapper;
 import com.example.shardingjdbcdemo.dao.OrderMapper;
+import com.example.shardingjdbcdemo.model.Area;
+import com.example.shardingjdbcdemo.model.AreaExample;
 import com.example.shardingjdbcdemo.model.Order;
 import com.example.shardingjdbcdemo.model.OrderExample;
 import net.minidev.json.JSONUtil;
@@ -17,6 +20,9 @@ class ShardingJdbcDemoApplicationTests {
 
     @Resource
     private OrderMapper orderMapper;
+
+    @Resource
+    private AreaMapper areaMapper;
 
     @Test
     void contextLoads() {
@@ -48,6 +54,22 @@ class ShardingJdbcDemoApplicationTests {
         List<Order> orders = orderMapper.selectByExample(orderExample);
         orders.forEach(item -> System.out.println(item.getId() + "---" + item.getUserId()));
 
+    }
+
+    @Test
+    public void testGlobal() {
+        Area area = new Area();
+        area.setId(2);
+        area.setName("深圳");
+        areaMapper.insert(area);
+    }
+
+    @Test
+    public void  testSelectGlobal() {
+        AreaExample areaExample = new AreaExample();
+        areaExample.createCriteria().andIdEqualTo(2);
+        List<Area> areas = areaMapper.selectByExample(areaExample);
+        System.out.println("area.size() = " + areas.size());
     }
 
 }

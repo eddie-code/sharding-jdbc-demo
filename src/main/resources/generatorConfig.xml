@@ -29,7 +29,7 @@
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 
-        <table schema="sharding_order" tableName="t_order_1" domainObjectName="Order" ></table>
+        <table schema="sharding_order" tableName="area" domainObjectName="Area" ></table>
 
 
     </context>

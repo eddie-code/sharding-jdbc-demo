@@ -36,6 +36,10 @@
                                      table-strategy-ref="tableStrategy"
                 />
             </sharding:table-rules>
+            <!-- 广播表规则列表 -->
+            <sharding:broadcast-table-rules>
+                <sharding:broadcast-table-rule table="area"/>
+            </sharding:broadcast-table-rules>
         </sharding:sharding-rule>
     </sharding:data-source>
 
