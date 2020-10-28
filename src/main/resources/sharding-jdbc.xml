@@ -74,8 +74,8 @@
     <!-- 数据表分片规则 -->
     <!-- id取模，可能会出现寻找到 t_order_0 的表，但实际上是没有的，所以 +1  -->
     <sharding:inline-strategy id="tableStrategy"
-                              sharding-column="id"
-                              algorithm-expression="t_order_$->{id % 2 + 1}"
+                              sharding-column="order_id"
+                              algorithm-expression="t_order_$->{order_id % 2 + 1}"
     />
 
     <!-- 设置 mybatis 数据源 -->
