@@ -2,10 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:sharding="http://shardingsphere.apache.org/schema/shardingsphere/sharding"
+       xmlns:master-slave="http://shardingsphere.apache.org/schema/shardingsphere/masterslave"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd
                         http://shardingsphere.apache.org/schema/shardingsphere/sharding
                         http://shardingsphere.apache.org/schema/shardingsphere/sharding/sharding.xsd
+                        http://shardingsphere.apache.org/schema/shardingsphere/masterslave
+                        http://shardingsphere.apache.org/schema/shardingsphere/masterslave/master-slave.xsd
                         ">
     <!-- MySQL数据源 -->
     <bean id="ds0" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
@@ -14,24 +17,39 @@
         <property name="password" value="Abc@123456" />
         <property name="jdbcUrl" value="jdbc:mysql://192.168.8.246/sharding_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
     </bean>
-    <bean id="ds1" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+    <!-- MySQL已经搭建好主从关系, 并非ShardingJdbc做的 -->
+    <bean id="slave0" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="username" value="eddie" />
+        <property name="password" value="Abc@123456" />
+        <property name="jdbcUrl" value="jdbc:mysql://192.168.8.245/sharding_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
+    </bean>
+    <bean id="ms1" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
         <property name="username" value="eddie" />
         <property name="password" value="Abc@123456" />
         <property name="jdbcUrl" value="jdbc:mysql://192.168.8.247/shard_order?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
     </bean>
 
+    <!-- 主从负载均衡, 策略：随机 -->
+    <master-slave:load-balance-algorithm id="msStrategy" type="random" />
+
     <!-- sharding-jdbc数据源 -->
     <sharding:data-source id="sharding-data-source">
         <!-- 多个数据源用逗号分割 -->
-        <sharding:sharding-rule data-source-names="ds0,ds1">
+        <sharding:sharding-rule data-source-names="ds0,slave0,ms1">
+            <!-- 主从关系 -->
+            <sharding:master-slave-rules>
+                <sharding:master-slave-rule id="ms0" master-data-source-name="ds0" slave-data-source-names="slave0" strategy-ref=""/>
+            </sharding:master-slave-rules>
+
             <sharding:table-rules>
                 <!-- 逻辑表名称 logic-table="t_order" 对应Mapper.xml里面的表名 -->
                 <!-- 数据节点 actual-data-nodes="ds$->{0..1}.t_order_$->{1..2}"  -->
                 <!-- 数据库分片策略 database-strategy-ref="databaseStrategy" -->
                 <!-- 数据表分片策略 table-strategy-ref="tableStrategy"  -->
                 <sharding:table-rule logic-table="t_order"
-                                     actual-data-nodes="ds$->{0..1}.t_order_$->{1..2}"
+                                     actual-data-nodes="ms$->{0..1}.t_order_$->{1..2}"
                                      database-strategy-ref="databaseStrategy"
                                      table-strategy-ref="tableStrategy"
                 />
@@ -50,7 +68,7 @@
     <!-- 数据库分片规则 -->
     <sharding:inline-strategy id="databaseStrategy"
                               sharding-column="user_id"
-                              algorithm-expression="ds$->{user_id % 2}"
+                              algorithm-expression="ms$->{user_id % 2}"
     />
 
     <!-- 数据表分片规则 -->

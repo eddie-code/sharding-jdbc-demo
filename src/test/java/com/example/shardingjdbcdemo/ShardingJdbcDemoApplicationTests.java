@@ -82,4 +82,20 @@ class ShardingJdbcDemoApplicationTests {
         orderItemMapper.insert(orderItem);
     }
 
+    @Test
+    public void testMsOrder() {
+        OrderExample orderExample = new OrderExample();
+        orderExample.createCriteria().andUserIdEqualTo(20).andOrderIdEqualTo(4);
+        List<Order> orders = orderMapper.selectByExample(orderExample);
+        for (int i = 0; i < 10; i++) {
+            orders.forEach(item->{
+                System.out.println("================");
+                System.out.println("userId = " + item.getUserId());
+                System.out.println("orderId = " + item.getOrderId());
+                // 通过修改从库的金额，在遍历出来，发现全部是100.00.证明都是在从库读取数据的，并非是随机
+                System.out.println("amount = " + item.getOrderAmount());
+            });
+        }
+    }
+
 }
