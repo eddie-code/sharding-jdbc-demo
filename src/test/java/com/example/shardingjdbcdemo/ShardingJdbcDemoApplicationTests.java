@@ -1,14 +1,10 @@
 package com.example.shardingjdbcdemo;
 
 import com.example.shardingjdbcdemo.dao.AreaMapper;
+import com.example.shardingjdbcdemo.dao.OrderItemMapper;
 import com.example.shardingjdbcdemo.dao.OrderMapper;
-import com.example.shardingjdbcdemo.model.Area;
-import com.example.shardingjdbcdemo.model.AreaExample;
-import com.example.shardingjdbcdemo.model.Order;
-import com.example.shardingjdbcdemo.model.OrderExample;
-import net.minidev.json.JSONUtil;
+import com.example.shardingjdbcdemo.model.*;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
@@ -24,6 +20,9 @@ class ShardingJdbcDemoApplicationTests {
     @Resource
     private AreaMapper areaMapper;
 
+    @Resource
+    private OrderItemMapper orderItemMapper;
+
     @Test
     void contextLoads() {
     }
@@ -33,7 +32,7 @@ class ShardingJdbcDemoApplicationTests {
         Order order = new Order();
 
         order.setUserId(20);
-        order.setId(4);
+        order.setOrderId(4);
         order.setOrderAmount(BigDecimal.TEN);
         order.setOrderStatus(1);
 
@@ -41,7 +40,7 @@ class ShardingJdbcDemoApplicationTests {
         System.out.println("ds" + order.getUserId() % 2);
 
         //  配置 t_order 分表策略
-        System.out.println("t_order_" + order.getId() % 2 + 1);
+        System.out.println("t_order_" + order.getOrderId() % 2 + 1);
 
         orderMapper.insert(order);
     }
@@ -50,9 +49,9 @@ class ShardingJdbcDemoApplicationTests {
     public void testSelectOrder() {
         OrderExample orderExample = new OrderExample();
         // select id, order_amount, order_status, user_id from t_order WHERE ( id = 4 and user_id = 20 )
-        orderExample.createCriteria().andIdEqualTo(4).andUserIdEqualTo(20);
+        orderExample.createCriteria().andOrderIdEqualTo(4).andUserIdEqualTo(20);
         List<Order> orders = orderMapper.selectByExample(orderExample);
-        orders.forEach(item -> System.out.println(item.getId() + "---" + item.getUserId()));
+        orders.forEach(item -> System.out.println(item.getOrderId() + "---" + item.getUserId()));
 
     }
 
@@ -70,6 +69,17 @@ class ShardingJdbcDemoApplicationTests {
         areaExample.createCriteria().andIdEqualTo(2);
         List<Area> areas = areaMapper.selectByExample(areaExample);
         System.out.println("area.size() = " + areas.size());
+    }
+
+    @Test
+    public void testOrderItem() {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(2);
+        orderItem.setOrderId(1);
+        orderItem.setPruductName("测试商品");
+        orderItem.setNum(1);
+        orderItem.setUserId(19);
+        orderItemMapper.insert(orderItem);
     }
 
 }

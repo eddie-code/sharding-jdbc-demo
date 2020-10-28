@@ -40,6 +40,10 @@
             <sharding:broadcast-table-rules>
                 <sharding:broadcast-table-rule table="area"/>
             </sharding:broadcast-table-rules>
+            <!-- 绑定表 -->
+            <!--<sharding:binding-table-rules>-->
+            <!--<sharding:binding-table-rule logic-tables="t_order,t_order_item" />-->
+            <!--</sharding:binding-table-rules>-->
         </sharding:sharding-rule>
     </sharding:data-source>
 
