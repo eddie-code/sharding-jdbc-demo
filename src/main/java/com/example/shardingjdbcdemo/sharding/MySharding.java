@@ -31,7 +31,7 @@ public class MySharding implements PreciseShardingAlgorithm<String> {
         String[] strings = collection.toArray(new String[0]);
         // mode 是复数，需要通过math取绝对值
         mode = Math.abs(mode);
-
+        // mode=1  = t_order_2的表
         System.out.println("mode=" + mode);
         System.out.println(strings[0] + "========" + strings[1]);
 

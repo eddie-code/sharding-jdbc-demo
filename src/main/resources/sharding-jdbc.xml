@@ -51,7 +51,8 @@
                 <sharding:table-rule logic-table="t_order"
                                      actual-data-nodes="ms$->{0..1}.t_order_$->{1..2}"
                                      database-strategy-ref="databaseStrategy"
-                                     table-strategy-ref="tableStrategy"
+                                     table-strategy-ref="standard"
+                                     key-generator-ref="uuid"
                 />
             </sharding:table-rules>
             <!-- 广播表规则列表 -->
@@ -64,12 +65,19 @@
             <!--</sharding:binding-table-rules>-->
         </sharding:sharding-rule>
     </sharding:data-source>
+    
+    <sharding:key-generator id="uuid" column="order_id" type="UUID" />
 
     <!-- 数据库分片规则 -->
     <sharding:inline-strategy id="databaseStrategy"
                               sharding-column="user_id"
                               algorithm-expression="ms$->{user_id % 2}"
     />
+
+    <!-- 实例化 -->
+    <bean id="mySharding" class="com.example.shardingjdbcdemo.sharding.MySharding" />
+    
+    <sharding:standard-strategy id="standard" sharding-column="order_id" precise-algorithm-ref="mySharding" />
 
     <!-- 数据表分片规则 -->
     <!-- id取模，可能会出现寻找到 t_order_0 的表，但实际上是没有的，所以 +1  -->

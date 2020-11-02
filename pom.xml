@@ -55,17 +55,17 @@
             </exclusions>
         </dependency>
         <!-- https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/usage/sharding/spring-namespace/ -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.shardingsphere</groupId>-->
-<!--            <artifactId>sharding-jdbc-spring-namespace</artifactId>-->
-<!--            <version>4.0.0-RC2</version>-->
-<!--        </dependency>-->
-        <!-- https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/usage/sharding/spring-boot-starter/ -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+            <artifactId>sharding-jdbc-spring-namespace</artifactId>
             <version>4.0.0-RC2</version>
         </dependency>
+        <!-- https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/usage/sharding/spring-boot-starter/ -->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.shardingsphere</groupId>-->
+<!--            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>-->
+<!--            <version>4.0.0-RC2</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 
