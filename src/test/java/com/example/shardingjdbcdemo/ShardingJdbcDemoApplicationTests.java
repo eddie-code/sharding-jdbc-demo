@@ -31,18 +31,14 @@ class ShardingJdbcDemoApplicationTests {
     public void testOrder() {
         Order order = new Order();
 
-        order.setUserId(20);
-        order.setOrderId(4);
+        order.setUserId(15);
         order.setOrderAmount(BigDecimal.TEN);
         order.setOrderStatus(1);
 
         //  配置 t_order 分库策略
         System.out.println("ds" + order.getUserId() % 2);
 
-        //  配置 t_order 分表策略
-        System.out.println("t_order_" + order.getOrderId() % 2 + 1);
-
-        orderMapper.insert(order);
+        orderMapper.insertSelective(order);
     }
 
     @Test
