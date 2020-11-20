@@ -2,6 +2,9 @@ package com.example.shardingjdbcdemo.model;
 
 import java.math.BigDecimal;
 
+/**
+ * @author eddie.lee
+ */
 public class Order {
     /**
      *
@@ -10,7 +13,7 @@ public class Order {
      *
      * @mbg.generated Wed Oct 28 14:10:26 CST 2020
      */
-    private String orderId;
+    private Long orderId;
 
     /**
      *
@@ -47,7 +50,7 @@ public class Order {
      *
      * @mbg.generated Wed Oct 28 14:10:26 CST 2020
      */
-    public String getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
@@ -59,7 +62,7 @@ public class Order {
      *
      * @mbg.generated Wed Oct 28 14:10:26 CST 2020
      */
-    public void setOrderId(String orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 

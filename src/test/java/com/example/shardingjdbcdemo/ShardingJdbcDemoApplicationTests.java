@@ -45,7 +45,7 @@ class ShardingJdbcDemoApplicationTests {
     public void testSelectOrder() {
         OrderExample orderExample = new OrderExample();
         // select id, order_amount, order_status, user_id from t_order WHERE ( id = 4 and user_id = 20 )
-        orderExample.createCriteria().andOrderIdEqualTo(4).andUserIdEqualTo(20);
+        orderExample.createCriteria().andOrderIdEqualTo(4l).andUserIdEqualTo(20);
         List<Order> orders = orderMapper.selectByExample(orderExample);
         orders.forEach(item -> System.out.println(item.getOrderId() + "---" + item.getUserId()));
 
@@ -81,7 +81,7 @@ class ShardingJdbcDemoApplicationTests {
     @Test
     public void testMsOrder() {
         OrderExample orderExample = new OrderExample();
-        orderExample.createCriteria().andUserIdEqualTo(20).andOrderIdEqualTo(4);
+        orderExample.createCriteria().andUserIdEqualTo(20).andOrderIdEqualTo(4l);
         List<Order> orders = orderMapper.selectByExample(orderExample);
         for (int i = 0; i < 10; i++) {
             orders.forEach(item->{

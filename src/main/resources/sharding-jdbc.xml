@@ -3,13 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:sharding="http://shardingsphere.apache.org/schema/shardingsphere/sharding"
        xmlns:master-slave="http://shardingsphere.apache.org/schema/shardingsphere/masterslave"
+       xmlns:bean="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd
                         http://shardingsphere.apache.org/schema/shardingsphere/sharding
                         http://shardingsphere.apache.org/schema/shardingsphere/sharding/sharding.xsd
                         http://shardingsphere.apache.org/schema/shardingsphere/masterslave
-                        http://shardingsphere.apache.org/schema/shardingsphere/masterslave/master-slave.xsd
-                        ">
+                        http://shardingsphere.apache.org/schema/shardingsphere/masterslave/master-slave.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
     <!-- MySQL数据源 -->
     <bean id="ds0" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
@@ -52,7 +52,7 @@
                                      actual-data-nodes="ms$->{0..1}.t_order_$->{1..2}"
                                      database-strategy-ref="databaseStrategy"
                                      table-strategy-ref="standard"
-                                     key-generator-ref="uuid"
+                                     key-generator-ref="snowflake"
                 />
             </sharding:table-rules>
             <!-- 广播表规则列表 -->
@@ -66,7 +66,12 @@
         </sharding:sharding-rule>
     </sharding:data-source>
     
-    <sharding:key-generator id="uuid" column="order_id" type="UUID" />
+    <sharding:key-generator id="snowflake" column="order_id" type="SNOWFLAKE"  props-ref="snow"/>
+    
+    <bean:properties id="snow">
+        <prop key="worker.id">678</prop>
+        <prop key="max.tolerate.time.difference.milliseconds">10</prop>  <!-- 最大容忍时间：单位-秒 -->
+    </bean:properties>
 
     <!-- 数据库分片规则 -->
     <sharding:inline-strategy id="databaseStrategy"
