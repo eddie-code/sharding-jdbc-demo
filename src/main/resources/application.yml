@@ -1,0 +1,58 @@
+logging:
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: /mybatis/*.xml
+spring:
+  shardingsphere:
+    datasource:
+      ds0:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://192.168.8.246/sharding_order
+        password: Abc@123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: eddie
+      ms1:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://192.168.8.247/shard_order
+        password: Abc@123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: eddie
+      names: ds0,slave0,ms1
+      slave0:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://192.168.8.245/sharding_order
+        password: Abc@123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: eddie
+    sharding:
+      broadcast-tables: area
+      master-slave-rules:
+        ms0:
+          load-balance-algorithm-type: RANDOM
+          master-data-source-name: ds0
+          slave-data-source-names: slave0
+      tables:
+        t_order:
+          actual-data-nodes: ms$->{0..1}.t_order_$->{1..2}
+          database-strategy:
+            inline:
+              algorithm-expression: ms$->{user_id % 2}
+              sharding-column: user_id
+          key-generator:
+            column: order_id
+            props:
+              max:
+                tolerate:
+                  time:
+                    difference:
+                      milliseconds: 10
+              worker:
+                id: 123
+            type: SNOWFLAKE
+          table-strategy:
+            standard:
+              precise-algorithm-class-name: com.example.shardingjdbcdemo.sharding.MySharding
+              sharding-column: order_id
