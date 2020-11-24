@@ -6,6 +6,7 @@ import com.example.shardingjdbcdemo.dao.OrderMapper;
 import com.example.shardingjdbcdemo.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -28,17 +29,29 @@ class ShardingJdbcDemoApplicationTests {
     }
 
     @Test
+    @Transactional
     public void testOrder() {
         Order order = new Order();
-
+        order.setOrderId(1l);
         order.setUserId(15);
         order.setOrderAmount(BigDecimal.TEN);
         order.setOrderStatus(1);
-
         //  配置 t_order 分库策略
-        System.out.println("ds" + order.getUserId() % 2);
-
+        System.out.println("order1: ds" + order.getUserId() % 2);
         orderMapper.insertSelective(order);
+
+
+        Order order2 = new Order();
+        order2.setOrderId(2l);
+        order2.setUserId(16);
+        order2.setOrderAmount(BigDecimal.TEN);
+        order2.setOrderStatus(1);
+        //  配置 t_order 分库策略
+        System.out.println("order2: ds" + order.getUserId() % 2);
+        orderMapper.insertSelective(order);
+
+        throw new RuntimeException("test XA");
+
     }
 
     @Test
